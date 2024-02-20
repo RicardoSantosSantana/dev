@@ -26,7 +26,7 @@ services:
     hostname: tuleap.ricardo.dev.br
     container_name: tuleap
     restart: always
-    entrypoint: ["/wait-for-it.sh", "db:3306", "--timeout=30", "--strict", "--"]
+    entrypoint: ["wait-for-it.sh", "db:3306", "--timeout=30", "--strict", "--"]
     volumes:
       - tuleap-data:/data
     environment:
