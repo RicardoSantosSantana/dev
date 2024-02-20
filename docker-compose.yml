@@ -81,11 +81,9 @@ services:
     environment:
       MYSQL_PWD: santana@souza3853
       MYSQL_ROOT_PASSWORD: santana@souza3853
-      MYSQL_DATABASE: santana
-      MYSQL_USER: root
+      MYSQL_DATABASE: santana   
       MYSQL_PASSWORD: santana@souza3853
- 
-
+  
   redis:
     image: redis:6-alpine
     volumes:
