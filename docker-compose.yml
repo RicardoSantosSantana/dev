@@ -33,7 +33,7 @@ services:
       - TULEAP_SYS_DBHOST=db
       - TULEAP_SYS_DBPASSWD='santana@souza3853'
       - SITE_ADMINISTRATOR_PASSWORD='santana@souza3853'
-      - DB_ADMIN_USER=root
+      - DB_ADMIN_USER=tuleap
       - DB_ADMIN_PASSWORD='santana@souza3853'
       - TULEAP_FPM_SESSION_MODE=redis
       - TULEAP_REDIS_SERVER=redis
