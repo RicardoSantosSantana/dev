@@ -79,6 +79,8 @@ services:
     volumes:
       - db-data:/var/lib/mysql    
     environment:
+      USER: root
+      MYSQL_PWD: santana@souza3853
       MYSQL_ROOT_PASSWORD: santana@souza3853
       MYSQL_DATABASE: santana
       MYSQL_USER: root
