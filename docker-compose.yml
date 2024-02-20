@@ -1,0 +1,100 @@
+version: "3.7"
+
+services:
+  traefik:
+    image: traefik:v2.4
+    container_name: traefik
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedByDefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=rssantan@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
+
+  tuleap:
+    image: tuleap/tuleap-community-edition
+    hostname: tuleap.ricardo.dev.br
+    container_name: tuleap
+    restart: always
+    volumes:
+      - tuleap-data:/data
+    environment:
+      - TULEAP_FQDN=tuleap.ricardo.dev.br
+      - TULEAP_SYS_DBHOST=db
+      - TULEAP_SYS_DBPASSWD=santana@souza3853.
+      - SITE_ADMINISTRATOR_PASSWORD=santana@souza3853.
+      - DB_ADMIN_USER=root
+      - DB_ADMIN_PASSWORD=santana@souza3853.
+      - TULEAP_FPM_SESSION_MODE=redis
+      - TULEAP_REDIS_SERVER=redis
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tuleap.rule=Host(`tuleap.ricardo.dev.br`)"
+      - "traefik.http.routers.tuleap.entrypoints=websecure"
+      - "traefik.http.routers.tuleap.tls.certresolver=myresolver"
+    depends_on:
+      - db
+      - redis
+
+  mailhog:
+    image: mailhog/mailhog
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mailhog.rule=Host(`mailhog.ricardo.dev.br`)"
+      - "traefik.http.routers.mailhog.entrypoints=web"
+
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    hostname: gitlab.ricardo.dev.br
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.ricardo.dev.br'
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
+        gitlab_rails['initial_root_password'] = 'santana@souza3853.'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gitlab.rule=Host(`gitlab.ricardo.dev.br`)"
+      - "traefik.http.routers.gitlab.entrypoints=websecure"
+      - "traefik.http.routers.gitlab.tls.certresolver=myresolver"
+      - "traefik.http.services.gitlab.loadbalancer.server.port=80"
+    volumes:
+      - './gitlab/config:/etc/gitlab'
+      - './gitlab/logs:/var/log/gitlab'
+      - './gitlab/data:/var/opt/gitlab'
+
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password --sql-mode="ONLY_FULL_GROUP_BY,NO_ENGINE_SUBSTITUTION"
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./src/dev.cnf:/etc/mysql/conf.d/tuleap.cnf:ro,cached
+    environment:
+      MYSQL_ROOT_PASSWORD: santana@souza3853.
+      MYSQL_DATABASE: tuleap
+      MYSQL_USER: tuleap
+      MYSQL_PASSWORD: santana@souza3853.
+ 
+
+  redis:
+    image: redis:6-alpine
+    volumes:
+      - redis-data:/data
+
+volumes:
+  tuleap-data:
+  gitlab-config:
+  gitlab-data:
+  db-data:
+  redis-data:
+  letsencrypt:
