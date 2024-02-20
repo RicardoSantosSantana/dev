@@ -26,16 +26,15 @@ services:
     hostname: tuleap.ricardo.dev.br
     container_name: tuleap
     restart: always
-    entrypoint: ["wait-for-it.sh", "db:3306", "--timeout=30", "--strict", "--"]
     volumes:
       - tuleap-data:/data
     environment:
       - TULEAP_FQDN=tuleap.ricardo.dev.br
       - TULEAP_SYS_DBHOST=db
-      - TULEAP_SYS_DBPASSWD=santana@souza3853.
-      - SITE_ADMINISTRATOR_PASSWORD=santana@souza3853.
+      - TULEAP_SYS_DBPASSWD='santana@souza3853'
+      - SITE_ADMINISTRATOR_PASSWORD='santana@souza3853'
       - DB_ADMIN_USER=root
-      - DB_ADMIN_PASSWORD=santana@souza3853.
+      - DB_ADMIN_PASSWORD='santana@souza3853'
       - TULEAP_FPM_SESSION_MODE=redis
       - TULEAP_REDIS_SERVER=redis
     labels:
@@ -62,7 +61,7 @@ services:
         external_url 'https://gitlab.ricardo.dev.br'
         nginx['listen_port'] = 80
         nginx['listen_https'] = false
-        gitlab_rails['initial_root_password'] = 'santana@souza3853.'
+        gitlab_rails['initial_root_password'] = 'santana@souza3853'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.gitlab.rule=Host(`gitlab.ricardo.dev.br`)"
@@ -76,15 +75,14 @@ services:
 
   db:
     image: mysql:8.0
-    command: --default-authentication-plugin=mysql_native_password --sql-mode="ONLY_FULL_GROUP_BY,NO_ENGINE_SUBSTITUTION"
+    command: --default-authentication-plugin=mysql_native_password --sql-mode="NO_ENGINE_SUBSTITUTION"
     volumes:
-      - db-data:/var/lib/mysql
-      - ./src/dev.cnf:/etc/mysql/conf.d/tuleap.cnf:ro,cached
+      - db-data:/var/lib/mysql    
     environment:
-      MYSQL_ROOT_PASSWORD: santana@souza3853.
-      MYSQL_DATABASE: tuleap
+      MYSQL_ROOT_PASSWORD: 'santana@souza3853'
+      MYSQL_DATABASE: santana
       MYSQL_USER: tuleap
-      MYSQL_PASSWORD: santana@souza3853.
+      MYSQL_PASSWORD: 'santana@souza3853'
  
 
   redis:
